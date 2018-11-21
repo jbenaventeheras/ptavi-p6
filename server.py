@@ -24,11 +24,16 @@ class RTPHandler(socketserver.DatagramRequestHandler):
 
     def handle(self):
         # Escribe dirección y puerto del cliente (de tupla client_address)
-        self.wfile.write(b"SIP/2.0 100 Trying, SIP/2.0 180 Ringing y SIP/2.0 200 Ol")
         while 1:
             # Leyendo línea a línea lo que nos envía el cliente
             line = self.rfile.read()
-            print("El cliente nos manda " + line.decode('utf-8'))
+            method = line.decode('utf-8').split(' ')[0]
+            print(method)
+            if method == 'INVITE':
+                self.wfile.write(b"SIP/2.0 100 Trying, SIP/2.0 180 Ringing y SIP/2.0 200 OK")
+            elif method == 'ACK':
+                self.wfile.write(b"ENVIARE EL AUDIO")
+
 
 
             # Si no hay más líneas salimos del bucle infinito
