@@ -7,6 +7,8 @@ import os
 import sys
 import socketserver
 
+VALID_METHODS = 'INVITE', 'ACK', 'BYE'
+
 if len(sys.argv) != 4:
         sys.exit('Usage: python3 server.py IP port audio_file')
 else:
@@ -27,21 +29,26 @@ class RTPHandler(socketserver.DatagramRequestHandler):
         while 1:
             # Leyendo línea a línea lo que nos envía el cliente
             line = self.rfile.read()
-            method = line.decode('utf-8').split(' ')[0]
-            print(method)
-            if method == 'INVITE':
-                self.wfile.write(b"SIP/2.0 100 Trying, SIP/2.0 180 Ringing y SIP/2.0 200 OK")
-            elif method == 'ACK':
-                self.wfile.write(b"ENVIARE EL AUDIO")
-
-
-
-            # Si no hay más líneas salimos del bucle infinito
             if not line:
                 break
+            line_lista = line.decode('utf-8').split()
+            method = line.decode('utf-8').split(' ')[0]
+            print (line_lista)
+            print (len(line_lista))
+            print(method)
+            if method == 'INVITE':
+                self.wfile.write(b'SIP/2.0 100 Trying, SIP/2.0 180 Ringing y SIP/2.0 200 OK\r\n\r\n')
+            elif method == 'ACK':
+            elif method not in VALID_METHODS:
+                self.wfile.write(b'SIP/2.0 405 Method Not Allowed\r\n\r\n')
+            else:
+                self.wfile.write(b"SIP/2.0 400 Bad Request\r\n\r\n")
 
 if __name__ == "__main__":
     # Creamos servidor de eco y escuchamos
     serv = socketserver.UDPServer((SERVER, 6001), RTPHandler)
-    print("Lanzando servidor UDP de eco...")
-    serv.serve_forever()
+    print("listening....")
+    try:
+        serv.serve_forever()
+    except KeyboardInterrupt:
+        print('End server')
