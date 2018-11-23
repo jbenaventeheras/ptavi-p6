@@ -33,16 +33,18 @@ class RTPHandler(socketserver.DatagramRequestHandler):
                 break
             line_lista = line.decode('utf-8').split()
             method = line.decode('utf-8').split(' ')[0]
-            print (line_lista)
-            print (len(line_lista))
             print(method)
             if method == 'INVITE':
-                self.wfile.write(b'SIP/2.0 100 Trying, SIP/2.0 180 Ringing y SIP/2.0 200 OK\r\n\r\n')
+                self.wfile.write(b'SIP/2.0 100 Trying, SIP/2.0 180 Ringing y SIP/2.0 200 OK')
             elif method == 'ACK':
+                os.system('./mp32rtp -i 127.0.0.1 -p 23032 < ' + audio_file)
+            elif method == 'BYE':
+                self.wfile.write(b'SIP/2.0 200 OK\r\n')
             elif method not in VALID_METHODS:
                 self.wfile.write(b'SIP/2.0 405 Method Not Allowed\r\n\r\n')
             else:
                 self.wfile.write(b"SIP/2.0 400 Bad Request\r\n\r\n")
+        print(line_lista)
 
 if __name__ == "__main__":
     # Creamos servidor de eco y escuchamos

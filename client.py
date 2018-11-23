@@ -29,7 +29,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
     my_socket.send(bytes(LINE, 'utf-8') + b'\r\n')
     data = my_socket.recv(1024)
     server_OK = data.decode('utf-8').split(' ')[-1]
-    if server_OK == 'OK':
+    print(data)
+    print(server_OK)
+    if server_OK == "OK":
+        print(server_OK)
         LINE ='ACK sip: ' + sys.argv[2].split(':')[0] + ' SIP/2.0' + '\r\n\r\n'
         my_socket.send(bytes(LINE, 'utf-8'))
 
