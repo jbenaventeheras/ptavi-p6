@@ -25,11 +25,11 @@ LINE = method + ' sip: ' + sys.argv[2].split(':')[0] + ' SIP/2.0' + '\r\n\r\n'
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
     my_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     my_socket.connect((SERVER, PORT))
-
+    print('ENVIANDO... ' + LINE)
     my_socket.send(bytes(LINE, 'utf-8') + b'\r\n')
     data = my_socket.recv(1024)
     server_OK = data.decode('utf-8').split(' ')[-1]
-    print(data)
+    print('RECIBIDO EN SOCKET MENSAJE: ' + data.decode('utf-8'))
     print(server_OK)
     if server_OK == "OK":
         print(server_OK)
