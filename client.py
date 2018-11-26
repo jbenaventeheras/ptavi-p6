@@ -19,7 +19,7 @@ else:
         sys.exit('Usage: python3 client.py method receiver@IP:SIPport')
 
 # Contenido que vamos a enviar
-LINE = method + ' sip: ' + sys.argv[2].split(':')[0] + ' SIP/2.0' + '\r\n\r\n'
+LINE = method + ' sip:' + sys.argv[2].split(':')[0] + ' SIP/2.0' + '\r\n\r\n'
 
 # Creamos el socket, lo configuramos y lo atamos a un servidor/puerto
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
@@ -30,9 +30,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
     data = my_socket.recv(1024)
     server_OK = data.decode('utf-8').split(' ')[-1]
     print('RECIBIDO EN SOCKET MENSAJE: ' + data.decode('utf-8'))
-    print(server_OK)
     if server_OK == "OK":
-        print(server_OK)
         LINE ='ACK sip: ' + sys.argv[2].split(':')[0] + ' SIP/2.0' + '\r\n\r\n'
         my_socket.send(bytes(LINE, 'utf-8'))
 
