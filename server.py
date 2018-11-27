@@ -43,10 +43,10 @@ class RTPHandler(socketserver.DatagramRequestHandler):
                 method = line.decode('utf-8').split(' ')[0]
                 if method == 'INVITE':
                     self.wfile.write(b'SIP/2.0 100 Trying, SIP/2.0 180 Ringing'
-                                     + ' y SIP/2.0 200 OK')
+                                     + b' y SIP/2.0 200 OK')
                 elif method == 'ACK':
                     print('ENVIANDO VIA RTP by os.system : ' + audio_file)
-                    os.system('./mp32rtp -i 127.0.0.1 -p 23032 < '
+                    os.system('./mp32rtp -i 127.0.0.1 -p 23032 < ' +
                               audio_file)
                 elif method == 'BYE':
                     self.wfile.write(b'SIP/2.0 200 OK\r\n')
