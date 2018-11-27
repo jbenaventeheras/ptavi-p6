@@ -31,7 +31,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
     server_OK = data.decode('utf-8').split(' ')[-1]
     print('RECIBIDO EN SOCKET MENSAJE: ' + data.decode('utf-8'))
     if server_OK == "OK":
-        LINE ='ACK sip: ' + sys.argv[2].split(':')[0] + ' SIP/2.0' + '\r\n\r\n'
+        LINE ='ACK sip:' + sys.argv[2].split(':')[0] + ' SIP/2.0' + '\r\n\r\n'
         my_socket.send(bytes(LINE, 'utf-8'))
+        data = my_socket.recv(1024)
+        print('RECIBIDO EN SOCKET MENSAJE: ' + data.decode('utf-8'))
 
 print("Fin.")

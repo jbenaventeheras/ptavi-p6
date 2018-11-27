@@ -24,6 +24,14 @@ class RTPHandler(socketserver.DatagramRequestHandler):
     Echo server class
     """
 
+
+    def Valid_list(self, line_lista):
+        Valid = False
+
+        if len(line_lista)==3 and line_lista[2] == 'SIP/2.0':
+            Valid = True
+        return Valid
+
     def handle(self):
         # Escribe dirección y puerto del cliente (de tupla client_address)
         while 1:
@@ -32,17 +40,18 @@ class RTPHandler(socketserver.DatagramRequestHandler):
             if not line:
                 break
             line_lista = line.decode('utf-8').split()
-            method = line.decode('utf-8').split(' ')[0]
             print('RECIBIDO EN SOCKET MENSAJE: ' + line.decode('utf-8'))
-            if method == 'INVITE':
-                self.wfile.write(b'SIP/2.0 100 Trying, SIP/2.0 180 Ringing y SIP/2.0 200 OK')
-            elif method == 'ACK':
-                print('ENVIANDO VIA RTP by os.system : ' + audio_file)
-                os.system('./mp32rtp -i 127.0.0.1 -p 23032 < ' + audio_file)
-            elif method == 'BYE':
-                self.wfile.write(b'SIP/2.0 200 OK\r\n')
-            elif method not in VALID_METHODS:
-                self.wfile.write(b'SIP/2.0 405 Method Not Allowed\r\n\r\n')
+            if self.Valid_list(line_lista):
+                method = line.decode('utf-8').split(' ')[0]
+                if method == 'INVITE':
+                    self.wfile.write(b'SIP/2.0 100 Trying, SIP/2.0 180 Ringing y SIP/2.0 200 OK')
+                elif method == 'ACK':
+                    print('ENVIANDO VIA RTP by os.system : ' + audio_file)
+                    os.system('./mp32rtp -i 127.0.0.1 -p 23032 < ' + audio_file)
+                elif method == 'BYE':
+                    self.wfile.write(b'SIP/2.0 200 OK\r\n')
+                elif method not in VALID_METHODS:
+                    self.wfile.write(b'SIP/2.0 405 Method Not Allowed\r\n\r\n')
             else:
                 self.wfile.write(b"SIP/2.0 400 Bad Request\r\n\r\n")
 
